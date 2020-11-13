@@ -1,11 +1,71 @@
 ;(async function(){
   console.log('start')
   const size = 16
+  const EXAMPLES = [
+    `Math.sin(y/8+t)`,
+    `[1, 0, -1][i%3]`,
+    `Math.random() < 0.1`,
+    `Math.random()`,
+    `Math.sin(t)`,
+    `i / 256`,
+    `x / 16`,
+    `y / 16`,
+    `y - t*4`,
+    `sin(t-sqrt((x-7.5)**2+(y-6)**2))`,
+    `(Math.random() * 2) - 1`,
+  ]
+
   const debugNode = document.querySelector('.debug');
   const dotsNode = document.querySelector('.dots');
   const inputNode = document.getElementById('input');
+  const randomExample = () => EXAMPLES[Math.floor(Math.random() * EXAMPLES.length)]
 
-  if (localStorage.input) inputNode.value = localStorage.input
+  let userInputAsFunction
+  function parseUserInput(){
+    const code = inputNode.value.trim()
+    localStorage.input = code
+    if (userInputAsFunction && userInputAsFunction.code === code) return;
+    try{
+      const newUserInputAsFunction = new Function('t', 'i', 'x', 'y', `with(Math){ return ${code} }`)
+      newUserInputAsFunction.code = code
+      newUserInputAsFunction(0,0,0,0)
+      userInputAsFunction = newUserInputAsFunction
+      inputNode.style.color = 'white'
+    }catch(error){
+      inputNode.style.color = 'red'
+    }
+    inputNode.focus()
+  }
+  parseUserInput()
+  inputNode.addEventListener('keyup', parseUserInput)
+  inputNode.addEventListener('change', parseUserInput)
+  inputNode.form.addEventListener('submit', event => {
+    event.preventDefault()
+    if (!userInputAsFunction) return
+    history.pushState('', null, `/?code=${encodeURIComponent(userInputAsFunction.code)}`)
+  })
+
+  const getCodeFromLocation = () =>
+    window.location.search.match(/code=([^&]+)/) && decodeURIComponent(RegExp.$1)
+
+  window.addEventListener('popstate', () => {
+    const value = getCodeFromLocation()
+    if (value){
+      inputNode.value = value
+      parseUserInput()
+    }
+  })
+
+  inputNode.value = getCodeFromLocation() || localStorage.input || randomExample()
+  parseUserInput()
+
+  dotsNode.addEventListener('click', () => {
+    let value
+    do { value = randomExample() } while (inputNode.value === value)
+    inputNode.value = value
+    parseUserInput()
+  })
+
 
   const dots = Array(size).fill().map(() => Array(size).fill())
   const forEachDot = iterator =>
@@ -54,25 +114,6 @@
   //   const scale = (x /size)
   //   dot.style.transform = `scale(${scale})`
   // })
-
-  let userInputAsFunction
-  function parseUserInput(){
-    const code = inputNode.value
-    console.log(`input="${code}"`)
-    localStorage.input = code
-    try{
-      const newUserInputAsFunction = new Function('t', 'i', 'x', 'y', `with(Math){ return ${code} }`)
-      newUserInputAsFunction(0,0,0,0)
-      userInputAsFunction = newUserInputAsFunction
-      inputNode.style.color = 'white'
-    }catch(e){
-      inputNode.style.color = 'red'
-      console.log('user input is invalid');
-    }
-  }
-  parseUserInput()
-  inputNode.addEventListener('keyup', parseUserInput)
-  inputNode.addEventListener('change', parseUserInput)
 
   function renderFrame(t){
     // console.log('RENDER! ', { t })

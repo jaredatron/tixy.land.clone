@@ -28,19 +28,34 @@ main{
   background-color: red;
   border-radius: 50%;
   margin: 1px;
+  /*transition: transform 10ms, background-color 10ms;*/
+}
+
+form{
+  margin-top: 20vh;
 }
 
 label[for="input"] {
   display: block;
+  color: red;
+}
+label[for="input"]:nth-child(3){
+  color: white;
 }
 
 #input{
   border: none;
   background: transparent;
-  outline: 1px dotted red;
   color: inherit;
   width: 100%;
   margin-left: 2em;
   font: inherit;
   font-family: inherit;
+}
+#input:focus{
+  outline: none;
+}
+
+.examples > a[href]{
+  color: white
 }
