@@ -2,11 +2,14 @@ html,body{
   margin: 0;
   padding: 0;
   background: black;
+  color: white;
+  font-family: monospace;
+  font-size: 14px;
 }
 
 main{
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding-top: 3vh;
@@ -25,4 +28,19 @@ main{
   background-color: red;
   border-radius: 50%;
   margin: 1px;
+}
+
+label[for="input"] {
+  display: block;
+}
+
+#input{
+  border: none;
+  background: transparent;
+  outline: 1px dotted red;
+  color: inherit;
+  width: 100%;
+  margin-left: 2em;
+  font: inherit;
+  font-family: inherit;
 }
