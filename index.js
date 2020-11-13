@@ -1,6 +1,7 @@
 ;(async function(){
   console.log('start')
   const size = 16
+  const debugNode = document.querySelector('.debug');
   const dotsNode = document.querySelector('.dots');
   const inputNode = document.getElementById('input');
 
@@ -48,11 +49,11 @@
   // const forEachDot = (iterator) =>
   //   loop(size, x => loop(size, y => iterator(x,y, dots[x][y])))
 
-  forEachDot((i, x, y) => {
-    const dot = dots[y][x]
-    const scale = (x /size)
-    dot.style.transform = `scale(${scale})`
-  })
+  // forEachDot((i, x, y) => {
+  //   const dot = dots[y][x]
+  //   const scale = (x /size)
+  //   dot.style.transform = `scale(${scale})`
+  // })
 
   let userInputAsFunction
   function parseUserInput(){
@@ -60,7 +61,7 @@
     console.log(`input="${code}"`)
     localStorage.input = code
     try{
-      const newUserInputAsFunction = new Function('t', 'i', 'x', 'y', `return ${code}`)
+      const newUserInputAsFunction = new Function('t', 'i', 'x', 'y', `with(Math){ return ${code} }`)
       newUserInputAsFunction(0,0,0,0)
       userInputAsFunction = newUserInputAsFunction
       inputNode.style.color = 'white'
@@ -74,46 +75,41 @@
   inputNode.addEventListener('change', parseUserInput)
 
   function renderFrame(t){
-    // console.log('RENDER! '+userInputAsFunction)
-
+    // console.log('RENDER! ', { t })
     forEachDot((i, x, y, dot) => {
+      // debugNode.innerText = `t=${t}`; //` i=${i} x=${x} y=${y}`
       let scale = userInputAsFunction(t, i, x, y)
       if (scale > 1) scale = 1
       if (scale < -1) scale = -1
-      // console.log({ scale, t, i, x, y })
-      // const scale = (x /size)
       const color = scale > 0 ? 'white' : scale < 0 ? 'red' : 'teal'
       dot.style.transform = `scale(${scale})`
       dot.style.backgroundColor = color
     })
-    // requestAnimationFrame(renderFrame)
   }
 
   window.renderCount = 0
   const interval = 10
   let now = Date.now()
-  let timeout = setInterval(
-    () => {
-      const then = now
-      now = Date.now()
-      const delta = now - then
-      const thisSecond = Math.floor(now / interval)
-      const t = thisSecond % (size*size)
-      window.renderCount++
-      requestAnimationFrame(() => { renderFrame(t) })
-    },
-    interval
-  )
-  renderFrame(0)
 
-  window.stop = function(){
-    clearTimeout(timeout);
+  let animationFrameRequestId
+  window.start = function(){
+    const now = () => Date.now() / 1000 // <- lower this to speed up time
+    const startTime = now();
+    let lastT = -1
+    const step = () => {
+      const delta = now() - startTime;
+      const t = Math.round(delta * 1000) / 1000
+      if (t !== lastT) renderFrame(t);
+      lastT = t
+      animationFrameRequestId = requestAnimationFrame(step)
+    }
+    step()
   }
 
-  // function refresh(){
+  window.stop = function(){
+    cancelAnimationFrame(animationFrameRequestId);
+  }
 
-  // }
-
-
+  start()
 
 })();
