@@ -1,3 +1,7 @@
+:root{
+  --color-white: white;
+  --color-red: #f24;
+}
 html,body{
   margin: 0;
   padding: 0;
@@ -17,22 +21,22 @@ main{
 
 .dots{
   margin: 0 auto;
+  width: min(60vh, 80vw);
+  height: min(60vh, 80vw);
 }
 .dots-row{
   display: flex;
   flex-direction: row;
+  height: 6.25000%;
 }
 .dot{
-  height: 15px;
-  width: 15px;
-  background-color: red;
+  width: 6.25000%;
   border-radius: 50%;
   margin: 1px;
-  /*transition: transform 10ms, background-color 10ms;*/
 }
 
 form{
-  margin-top: 20vh;
+  margin-top: 10vh;
 }
 
 label[for="input"] {

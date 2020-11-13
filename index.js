@@ -1,6 +1,7 @@
 ;(async function(){
-  console.log('start')
+
   const size = 16
+
   const EXAMPLES = [
     `Math.sin(y/8+t)`,
     `[1, 0, -1][i%3]`,
@@ -11,8 +12,24 @@
     `x / 16`,
     `y / 16`,
     `y - t*4`,
+    `y - t`,
+    `y - x`,
     `sin(t-sqrt((x-7.5)**2+(y-6)**2))`,
     `(Math.random() * 2) - 1`,
+    `(y > x) && (14-x < y)`,
+    `i%4 - y%4`,
+    `x%4 && y%4`,
+    `x>3 & y>3 & x<12 & y<12`,
+    `-(x>t & y>t & x<15-t & y<15-t)`,
+    `(y-6) * (x-6)`,
+    `(y-4*t|0) * (x-2-t|0)`,
+    `4 * t & i & x & y`,
+    `(t*10) & (1<<x) && y==8`,
+    `sin(i ** 2)`,
+    `cos(t + i + x * y)`,
+    `sin(x/2) - sin(x-t) - y+6`,
+    `(x-8)*(y-8) - sin(t)*64`,
+    ``,
   ]
 
   const debugNode = document.querySelector('.debug');
@@ -95,14 +112,19 @@
     row.appendChild(dot)
     dots[i] = dot
   })
-  console.log(dots)
+
   function renderFrame(t){
     const newStyles = []
     forEachDot((i, x, y, dot) => {
       let scale = userInputAsFunction(t, i, x, y)
-      if (scale > 1) scale = 1
-      if (scale < -1) scale = -1
-      const color = scale > 0 ? 'white' : scale < 0 ? 'red' : 'transparent'
+      if (scale === true || scale > 1) scale = 1
+      else if (scale === false) scale = 0
+      else if (scale < -1) scale = -1
+      const color = (
+        scale > 0 ? 'var(--color-white)' :
+        scale < 0 ? 'var(--color-red)' :
+        'transparent'
+      )
       newStyles[i] = [scale, color];
     })
     requestAnimationFrame(() => {
@@ -118,25 +140,20 @@
   const interval = 10
   let now = Date.now()
 
-  let animationFrameRequestId
   let timeoutId
   window.start = function(){
     const now = () => Date.now() / 1000 // <- lower this to speed up time
     const startTime = now();
-    let lastT = -1
     const step = () => {
       const delta = now() - startTime;
       const t = Math.round(delta * 1000) / 1000
-      if (t !== lastT) renderFrame(t);
-      lastT = t
-      // animationFrameRequestId = requestAnimationFrame(step)
+      renderFrame(t);
       timeoutId = setTimeout(step, 0)
     }
     step()
   }
 
   window.stop = function(){
-    // cancelAnimationFrame(animationFrameRequestId);
     clearTimeout(timeoutId);
   }
 
