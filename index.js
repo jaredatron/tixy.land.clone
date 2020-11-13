@@ -67,12 +67,13 @@
   })
 
 
-  const dots = Array(size).fill().map(() => Array(size).fill())
+  // const dots = Array(size).fill().map(() => Array(size).fill())
+  const dots = []
   const forEachDot = iterator =>
     Array(size * size).fill().map((_,i) => {
       const x = Math.floor(i / size)
       const y = i % size
-      const dot = dots[y][x]
+      const dot = dots[i]
       return iterator(i, x, y, dot)
     })
 
@@ -92,39 +93,24 @@
     }
     const dot = createNode('dot')
     row.appendChild(dot)
-    dots[y][x] = dot
+    dots[i] = dot
   })
-  console.log({ dots })
-
-  // const dots = loop(size, x => {
-  //   const row = createNode('dots-row')
-  //   dotsNode.appendChild(row)
-  //   return loop(size, y => {
-  //     const dot = createNode('dot')
-  //     row.appendChild(dot)
-  //     return dot
-  //   })
-  // })
-
-  // const forEachDot = (iterator) =>
-  //   loop(size, x => loop(size, y => iterator(x,y, dots[x][y])))
-
-  // forEachDot((i, x, y) => {
-  //   const dot = dots[y][x]
-  //   const scale = (x /size)
-  //   dot.style.transform = `scale(${scale})`
-  // })
-
+  console.log(dots)
   function renderFrame(t){
-    // console.log('RENDER! ', { t })
+    const newStyles = []
     forEachDot((i, x, y, dot) => {
-      // debugNode.innerText = `t=${t}`; //` i=${i} x=${x} y=${y}`
       let scale = userInputAsFunction(t, i, x, y)
       if (scale > 1) scale = 1
       if (scale < -1) scale = -1
-      const color = scale > 0 ? 'white' : scale < 0 ? 'red' : 'teal'
-      dot.style.transform = `scale(${scale})`
-      dot.style.backgroundColor = color
+      const color = scale > 0 ? 'white' : scale < 0 ? 'red' : 'transparent'
+      newStyles[i] = [scale, color];
+    })
+    requestAnimationFrame(() => {
+      newStyles.forEach(([scale, color], i) => {
+        const dot = dots[i]
+        dot.style.transform = `scale(${scale})`
+        dot.style.backgroundColor = color
+      })
     })
   }
 
@@ -133,6 +119,7 @@
   let now = Date.now()
 
   let animationFrameRequestId
+  let timeoutId
   window.start = function(){
     const now = () => Date.now() / 1000 // <- lower this to speed up time
     const startTime = now();
@@ -142,13 +129,15 @@
       const t = Math.round(delta * 1000) / 1000
       if (t !== lastT) renderFrame(t);
       lastT = t
-      animationFrameRequestId = requestAnimationFrame(step)
+      // animationFrameRequestId = requestAnimationFrame(step)
+      timeoutId = setTimeout(step, 0)
     }
     step()
   }
 
   window.stop = function(){
-    cancelAnimationFrame(animationFrameRequestId);
+    // cancelAnimationFrame(animationFrameRequestId);
+    clearTimeout(timeoutId);
   }
 
   start()
