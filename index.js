@@ -48,9 +48,10 @@
   function parseUserInput(){
     const code = inputNode.value.trim()
     localStorage.input = code
+    console.log('parseUserInput', userInputAsFunction && userInputAsFunction.code === code)
     if (userInputAsFunction && userInputAsFunction.code === code){
       inputNode.style.color = 'white'
-      start()
+      restart()
     }else{
       try{
         const newUserInputAsFunction = new Function('t', 'i', 'x', 'y', `with(Math){ return ${code} }`)
@@ -60,13 +61,14 @@
         inputNode.style.color = 'var(--color-white)'
         restart()
       }catch(error){
+        console.error('parseUserInput', error)
         inputNode.style.color = 'var(--color-red)'
         stop()
       }
     }
     inputNode.focus()
   }
-  parseUserInput()
+
   inputNode.addEventListener('keyup', parseUserInput)
   inputNode.addEventListener('change', parseUserInput)
   inputNode.form.addEventListener('submit', event => {
@@ -86,8 +88,6 @@
     }
   })
 
-  inputNode.value = getCodeFromLocation() || localStorage.input || randomExample()
-  parseUserInput()
 
   dotsNode.addEventListener('click', () => {
     let value
@@ -171,8 +171,10 @@
   }
 
   window.restart = function(){
-    startTime = now();
+    stop(); start()
   }
 
-  start()
+  inputNode.value = getCodeFromLocation() || localStorage.input || randomExample()
+  parseUserInput()
+  // start()
 })();
