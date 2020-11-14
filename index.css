@@ -70,6 +70,10 @@ label[for="input"] {
   display: block;
   color: var(--color-red);
 }
+label[for="input"] > * {
+  color: inherit;
+  text-decoration: none;
+}
 label[for="input"]:nth-child(3){
   color: var(--color-white);
 }
