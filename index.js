@@ -49,6 +49,10 @@
     const code = inputNode.value.trim()
     if (localStorage.input === code) return // noop
     localStorage.input = code
+    updateDotsFunction(code)
+  }
+
+  function updateDotsFunction(code){
     console.log('parseUserInput', userInputAsFunction && userInputAsFunction.code === code)
     if (userInputAsFunction && userInputAsFunction.code === code){
       inputNode.style.color = 'white'
@@ -176,6 +180,6 @@
   }
 
   inputNode.value = getCodeFromLocation() || localStorage.input || randomExample()
-  parseUserInput()
+  updateDotsFunction(inputNode.value)
   // start()
 })();

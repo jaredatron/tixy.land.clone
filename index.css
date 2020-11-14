@@ -2,6 +2,19 @@
   --color-white: white;
   --color-red: #f24;
 }
+
+html {
+  box-sizing: border-box;
+  /*-webkit-overflow-scrolling: touch*/
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
 html,body{
   margin: 0;
   padding: 0;
@@ -48,6 +61,8 @@ main:fullscreen form{
 form{
   height: 20vh;
   font-size: min(4.8vw,3.7vh);
+  /*overflow: hidden;*/
+  max-width: 90vw;
 }
 
 label[for="input"] {
@@ -63,7 +78,7 @@ label[for="input"]:nth-child(3){
   background: transparent;
   color: inherit;
   width: 100%;
-  margin-left: 2em;
+  padding-left: 2em;
   font: inherit;
   font-family: inherit;
 }
