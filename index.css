@@ -18,6 +18,17 @@ main{
   align-items: center;
   padding-top: 3vh;
 }
+main:fullscreen{
+  padding: 0;
+}
+main:fullscreen .dots{
+  margin: 0;
+  width: min(85vh, 95vw);
+  height: min(85vh, 95vw);
+}
+main:fullscreen form{
+  display: none;
+}
 
 .dots{
   margin: 0 auto;
@@ -63,3 +74,4 @@ label[for="input"]:nth-child(3){
 .examples > a[href]{
   color: white
 }
+

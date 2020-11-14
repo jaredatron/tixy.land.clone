@@ -1,3 +1,4 @@
+
 ;(async function(){
 
   const size = 16
@@ -83,6 +84,10 @@
     parseUserInput()
   })
 
+  document.addEventListener('keydown', event => {
+    // TODO if full screen keydombo
+    // dotsNode.parentNode.requestFullscreen()
+  })
 
   // const dots = Array(size).fill().map(() => Array(size).fill())
   const dots = []
@@ -158,5 +163,9 @@
   }
 
   start()
+
+
+
+
 
 })();
