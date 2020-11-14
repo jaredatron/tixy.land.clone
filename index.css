@@ -52,10 +52,10 @@ form{
 
 label[for="input"] {
   display: block;
-  color: red;
+  color: var(--color-red);
 }
 label[for="input"]:nth-child(3){
-  color: white;
+  color: var(--color-white);
 }
 
 #input{

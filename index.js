@@ -30,6 +30,12 @@
     `cos(t + i + x * y)`,
     `sin(x/2) - sin(x-t) - y+6`,
     `(x-8)*(y-8) - sin(t)*64`,
+    `1-((x*x-y+t*(1+x*x%5)*3)%16)/16`,
+    `(2*(x-8)/y-9*t)&2^(20/y)&2`,
+    `(x+(t*10)/16)&y+(t*10)`,
+    `d=y*y%5.9+1,!((x+t*50/d)&15)/d`,
+    `'p}¶¼<¼¶}p'.charCodeAt(x)&2**y`,
+    `hypot(x-=t*5,y-=8)<6&(x<y|y<-x)`,
     ``,
   ]
 
@@ -42,15 +48,21 @@
   function parseUserInput(){
     const code = inputNode.value.trim()
     localStorage.input = code
-    if (userInputAsFunction && userInputAsFunction.code === code) return;
-    try{
-      const newUserInputAsFunction = new Function('t', 'i', 'x', 'y', `with(Math){ return ${code} }`)
-      newUserInputAsFunction.code = code
-      newUserInputAsFunction(0,0,0,0)
-      userInputAsFunction = newUserInputAsFunction
+    if (userInputAsFunction && userInputAsFunction.code === code){
       inputNode.style.color = 'white'
-    }catch(error){
-      inputNode.style.color = 'red'
+      start()
+    }else{
+      try{
+        const newUserInputAsFunction = new Function('t', 'i', 'x', 'y', `with(Math){ return ${code} }`)
+        newUserInputAsFunction.code = code
+        newUserInputAsFunction(0,0,0,0)
+        userInputAsFunction = newUserInputAsFunction
+        inputNode.style.color = 'var(--color-white)'
+        restart()
+      }catch(error){
+        inputNode.style.color = 'var(--color-red)'
+        stop()
+      }
     }
     inputNode.focus()
   }
@@ -89,7 +101,6 @@
     // dotsNode.parentNode.requestFullscreen()
   })
 
-  // const dots = Array(size).fill().map(() => Array(size).fill())
   const dots = []
   const forEachDot = iterator =>
     Array(size * size).fill().map((_,i) => {
@@ -141,14 +152,11 @@
     })
   }
 
-  window.renderCount = 0
-  const interval = 10
-  let now = Date.now()
-
+  const now = () => Date.now() / 1000 // <- lower this to speed up time
+  let startTime
   let timeoutId
   window.start = function(){
-    const now = () => Date.now() / 1000 // <- lower this to speed up time
-    const startTime = now();
+    startTime = now();
     const step = () => {
       const delta = now() - startTime;
       const t = Math.round(delta * 1000) / 1000
@@ -162,10 +170,9 @@
     clearTimeout(timeoutId);
   }
 
+  window.restart = function(){
+    startTime = now();
+  }
+
   start()
-
-
-
-
-
 })();
