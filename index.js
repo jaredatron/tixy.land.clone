@@ -44,7 +44,7 @@
   const inputNode = document.getElementById('input');
   const randomExample = () => EXAMPLES[Math.floor(Math.random() * EXAMPLES.length)]
 
-  let userInputAsFunction
+  let dotsFunction
   function parseUserInput(){
     const code = inputNode.value.trim()
     if (localStorage.input === code) return // noop
@@ -53,33 +53,32 @@
   }
 
   function updateDotsFunction(code){
-    console.log('parseUserInput', userInputAsFunction && userInputAsFunction.code === code)
-    if (userInputAsFunction && userInputAsFunction.code === code){
-      inputNode.style.color = 'white'
-      restart()
-    }else{
+    if (!dotsFunction || dotsFunction.code !== code){
+      let newDotsFunction, error
       try{
-        const newUserInputAsFunction = new Function('t', 'i', 'x', 'y', `with(Math){ return ${code} }`)
-        newUserInputAsFunction.code = code
-        newUserInputAsFunction(0,0,0,0)
-        userInputAsFunction = newUserInputAsFunction
-        inputNode.style.color = 'var(--color-white)'
-        restart()
-      }catch(error){
-        console.error('parseUserInput', error)
+        newDotsFunction = new Function('t', 'i', 'x', 'y', `with(Math){ return ${code} }`)
+        newDotsFunction(0,0,0,0)
+      }catch(e){ error = e }
+
+      if (error){
         inputNode.style.color = 'var(--color-red)'
         stop()
+        return
+      }else{
+        newDotsFunction.code = code
+        dotsFunction = newDotsFunction
       }
     }
-    inputNode.focus()
+    inputNode.style.color = 'var(--color-white)'
+    restart()
   }
 
   inputNode.addEventListener('keyup', parseUserInput)
   inputNode.addEventListener('change', parseUserInput)
   inputNode.form.addEventListener('submit', event => {
     event.preventDefault()
-    if (!userInputAsFunction) return
-    history.pushState('', null, `/?code=${encodeURIComponent(userInputAsFunction.code)}`)
+    if (!dotsFunction) return
+    history.pushState('', null, `/?code=${encodeURIComponent(dotsFunction.code)}`)
   })
 
   const getCodeFromLocation = () =>
@@ -99,11 +98,13 @@
     do { value = randomExample() } while (inputNode.value === value)
     inputNode.value = value
     parseUserInput()
+    inputNode.focus()
   })
 
   document.addEventListener('keydown', event => {
+    if (event.key === 'f' && event.ctrlKey && event.metaKey)
+      dotsNode.parentNode.requestFullscreen()
     // TODO if full screen keydombo
-    // dotsNode.parentNode.requestFullscreen()
   })
 
   const dots = []
@@ -137,7 +138,7 @@
   function renderFrame(t){
     const newStyles = []
     forEachDot((i, x, y, dot) => {
-      let scale = userInputAsFunction(t, i, x, y)
+      let scale = dotsFunction(t, i, x, y)
       if (scale === true || scale > 1) scale = 1
       else if (scale === false) scale = 0
       else if (scale < -1) scale = -1
@@ -181,5 +182,6 @@
 
   inputNode.value = getCodeFromLocation() || localStorage.input || randomExample()
   updateDotsFunction(inputNode.value)
+  inputNode.focus()
   // start()
 })();

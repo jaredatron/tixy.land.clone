@@ -34,9 +34,10 @@ main:fullscreen{
   padding: 0;
 }
 main:fullscreen .dots{
-  margin: 0;
-  width: min(85vh, 95vw);
-  height: min(85vh, 95vw);
+  margin: auto;
+  width: min(95vh, 95vw);
+  height: min(95vh, 95vw);
+  position: absolute;
 }
 main:fullscreen form{
   display: none;
