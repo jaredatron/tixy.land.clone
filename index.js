@@ -47,6 +47,7 @@
   let userInputAsFunction
   function parseUserInput(){
     const code = inputNode.value.trim()
+    if (localStorage.input === code) return // noop
     localStorage.input = code
     console.log('parseUserInput', userInputAsFunction && userInputAsFunction.code === code)
     if (userInputAsFunction && userInputAsFunction.code === code){

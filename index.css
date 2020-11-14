@@ -16,7 +16,6 @@ main{
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: 3vh;
 }
 main:fullscreen{
   padding: 0;
@@ -31,9 +30,9 @@ main:fullscreen form{
 }
 
 .dots{
-  margin: 0 auto;
-  width: min(60vh, 80vw);
-  height: min(60vh, 80vw);
+  margin: 5vh auto;
+  width: min(70vh, 90vw);
+  height: min(70vh, 90vw);
 }
 .dots-row{
   display: flex;
@@ -47,7 +46,8 @@ main:fullscreen form{
 }
 
 form{
-  margin-top: 10vh;
+  height: 20vh;
+  font-size: min(4.8vw,3.7vh);
 }
 
 label[for="input"] {
